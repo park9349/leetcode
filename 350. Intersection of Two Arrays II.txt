@@ -1,0 +1,67 @@
+public class Solution {
+    public int[] intersect(int[] nums1, int[] nums2) {
+        int[] first_res = new int[0];
+        if(nums1.length == 0)
+            return first_res;
+        if(nums2.length == 0)
+            return first_res;
+        nums1 = cutandsort(nums1);
+        nums2 = cutandsort(nums2);
+        int length;
+        if(nums1.length > nums2.length)
+            length = nums1.length;
+        else
+            length = nums2.length;
+        int[] temp_res = new int[length];
+        int idx = 0;
+        for(int i = 0,j = 0; (i < nums1.length)&&(j < nums2.length);){
+            if(nums1[i] > nums2[j])
+                j++;
+            else if(nums1[i] < nums2[j])
+                i++;
+            else{
+                temp_res[idx] = nums1[i];
+                idx++;
+                i++;
+                j++;
+            }
+        }
+        int[] real_res = new int[idx];
+        for(int i = 0; i < idx;i++){
+            real_res[i] = temp_res[i];
+        }
+        return real_res;
+    }
+    private int[] cutandsort(int[] nums){
+        sort(nums,0,nums.length-1);
+        return nums;
+    }
+    private void sort(int[] nums, int p, int q){
+        int mid;
+        if(q - p > 1){
+            mid = find(nums,p,q);
+            sort(nums,p,mid-1);
+            sort(nums,mid+1,q);
+        }
+        if(q - p == 1){
+            if(nums[p] > nums[q]){
+                int temp = nums[p];
+                nums[p] = nums[q];
+                nums[q] = temp;
+            }
+        }
+    }
+    private int find(int[] nums, int p, int q){
+        int mid = nums[q];
+        int i,j;
+        for(i = p-1,j = p;j <= q;j++){
+            if(nums[j] <= mid){
+                int temp = nums[j];
+                nums[j] = nums[i+1];
+                nums[i+1] = temp;
+                i++;
+            }
+        }
+        return i;
+    }
+}
