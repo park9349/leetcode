@@ -1,0 +1,51 @@
+public class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        //unlock algorithm
+        int length = prerequisites.length;
+        int[] recordboard = new int[numCourses];
+        int numTakenCourses;
+        //initialize 0 not take 1 taken 2 maybe -1 cannot
+        for(int i = 0; i < numCourses; i++){
+            recordboard[i] = 0;
+        }
+        //take all no prerequisites course
+        for(int i = 0; i < length; i++){
+            recordboard[prerequisites[i][0]] = 1;
+        }
+        for(int i = 0; i < numCourses; i++){
+            recordboard[i] = 1 - recordboard[i]; 
+        }
+        //unlock
+        while(true){
+            numTakenCourses = 0;
+            //find courses
+            for(int i = 0; i < length; i++){
+                if(recordboard[prerequisites[i][1]] == 1 && recordboard[prerequisites[i][0]] == 0){
+                    recordboard[prerequisites[i][0]] = 2;
+                }
+                if(recordboard[prerequisites[i][1]] != 1 && recordboard[prerequisites[i][0]] != 1){
+                    recordboard[prerequisites[i][0]] = -1;
+                }
+            }
+            //take courses
+            for(int i = 0; i < length; i++){
+                if(recordboard[prerequisites[i][1]] == 2){
+                   recordboard[prerequisites[i][1]]--; 
+                   numTakenCourses++;
+                }
+                if(recordboard[prerequisites[i][1]] == -1){
+                   recordboard[prerequisites[i][1]]++; 
+                }
+            }
+            //end
+            if(numTakenCourses == 0){
+                for(int i = 0; i < numCourses; i++){
+                    if(recordboard[i] == 0){
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+    }
+}
