@@ -1,0 +1,118 @@
+public class Solution {
+    public boolean exist(char[][] board, String word) {
+        if (board.length == 0)
+            return true;
+        int row = board.length;
+        int column = board[0].length;
+        int wordlength = word.length();
+        int total = 0;
+        while(true){
+            //initiallize
+            int[] rowlength = new int[wordlength];
+            int[] columnlength = new int[wordlength];
+            int[] progress = new int[wordlength];
+            int[][] recordboard = new int[row][column];
+            for(int i = 0; i < row; i++){
+                for(int j = 0; j < column; j++){
+                    recordboard[i][j] = 0;
+                }
+            }
+            //find first char
+            int flag = 0;
+            for(;total < row*column;){
+                int ii = total/column;
+                int jj = total%column;
+                total++;
+                if(board[ii][jj] == word.charAt(0)){
+                    flag = 1;
+                    recordboard[ii][jj] = 1;
+                    rowlength[0] = ii;
+                    columnlength[0] = jj;
+                    break;
+                }
+            }
+            if(flag == 0)
+                return false;
+            flag = 0;
+            progress[flag] = 0;
+            //start search
+        
+            while(flag >= 0){
+                if(flag == wordlength - 1)
+                    return true;
+                if(progress[flag] == 4){
+                    recordboard[rowlength[flag]][columnlength[flag]] = 0;
+                    flag--;
+                    continue;
+                }
+                for(int i = progress[flag]; i < 4; i++){
+                    if(i == 0){
+                        progress[flag]++;
+                        if(valid(row, column, rowlength[flag] - 1, columnlength[flag], recordboard)){
+                            if(board[rowlength[flag] - 1][columnlength[flag]] == word.charAt(flag + 1)){
+                                flag++;
+                                progress[flag] = 0;
+                                rowlength[flag] = rowlength[flag - 1] - 1;
+                                columnlength[flag] = columnlength[flag - 1];
+                                recordboard[rowlength[flag]][columnlength[flag]] = 1;
+                                break;
+                            }
+                        }
+                    }
+                    if(i == 1){
+                        progress[flag]++;
+                        if(valid(row, column, rowlength[flag], columnlength[flag] + 1, recordboard)){
+                            if(board[rowlength[flag]][columnlength[flag] + 1] == word.charAt(flag + 1)){
+                                flag++;
+                                progress[flag] = 0;
+                                rowlength[flag] = rowlength[flag - 1];
+                                columnlength[flag] = columnlength[flag - 1] + 1;
+                                recordboard[rowlength[flag]][columnlength[flag]] = 1;
+                                break;
+                            }
+                        }
+                    }
+                    if(i == 2){
+                        progress[flag]++;
+                        if(valid(row, column, rowlength[flag] + 1, columnlength[flag], recordboard)){
+                            if(board[rowlength[flag] + 1][columnlength[flag]] == word.charAt(flag + 1)){
+                                flag++;
+                                progress[flag] = 0;
+                                rowlength[flag] = rowlength[flag - 1] + 1;
+                                columnlength[flag] = columnlength[flag - 1];
+                                recordboard[rowlength[flag]][columnlength[flag]] = 1;
+                                break;
+                            }
+                        }
+                    }
+                    if(i == 3){
+                        progress[flag]++;
+                        if(valid(row, column, rowlength[flag], columnlength[flag] - 1, recordboard)){
+                            if(board[rowlength[flag]][columnlength[flag] - 1] == word.charAt(flag + 1)){
+                                flag++;
+                                progress[flag] = 0;
+                                rowlength[flag] = rowlength[flag - 1];
+                                columnlength[flag] = columnlength[flag - 1] - 1;
+                                recordboard[rowlength[flag]][columnlength[flag]] = 1;
+                                break;
+                            }else{
+                                recordboard[rowlength[flag]][columnlength[flag]] = 0;
+                                flag--;
+                            }
+                        }else{
+                            recordboard[rowlength[flag]][columnlength[flag]] = 0;
+                            flag--;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private boolean valid(int row, int column, int x, int y, int[][] recordboard){
+        if(x < row && x >= 0)
+            if(y < column && y >= 0)
+                if(recordboard[x][y] == 0)
+                    return true;
+        return false;
+    }
+}

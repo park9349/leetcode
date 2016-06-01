@@ -1,0 +1,59 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        return FindTree(inorder, postorder);
+    }
+    private TreeNode FindTree(int[] inorder, int[] postorder) {
+        if(inorder.length == 0)
+            return null;
+        //find middle part
+        int mid_inorder = 0;
+        int mid_postorder = postorder.length - 1;
+        for(;;mid_inorder++) {
+            if(inorder[mid_inorder] == postorder[mid_postorder])
+                break;
+        }
+        TreeNode mid = new TreeNode(inorder[mid_inorder]);
+        //find left part, may not exist
+        int left_left = 0;
+        int left_right = mid_inorder - 1;
+        int left_length = left_right - left_left + 1;
+        if (left_length == 0){
+            mid.left = null;
+        }else {
+            int[] new_inorder_left = new int[left_length];
+            int[] new_postorder_left = new int[left_length];
+            for(int i = 0; i < left_length; i++) {
+                new_inorder_left[i] = inorder[i];
+                new_postorder_left[i] = postorder[i];
+            }
+            TreeNode LeftNode = FindTree(new_inorder_left, new_postorder_left);
+            mid.left = LeftNode;
+        }
+        //find right part, may not exist
+        int right_left = mid_inorder + 1;
+        int right_right = inorder.length - 1;
+        int right_length = right_right - right_left + 1;
+        if (right_length == 0){
+            mid.right = null;
+        }else {
+            int[] new_inorder_right = new int[right_length];
+            int[] new_postorder_right = new int[right_length];
+            for(int i = 0; i < right_length; i++) {
+                new_inorder_right[i] = inorder[i + right_left];
+                new_postorder_right[i] = postorder[i + right_left - 1];
+            }
+            TreeNode RightNode = FindTree(new_inorder_right, new_postorder_right);
+            mid.right = RightNode;
+        }
+        return mid;
+    }
+}
